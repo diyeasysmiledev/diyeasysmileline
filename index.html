@@ -51,18 +51,15 @@
             }
         }
 
-        /* --- NEW: Interactive Hover Effects --- */
+        /* --- Interactive Hover Effects --- */
 
         /* Main Card Hover Effect */
         .interactive-card {
-            /* Add transition for smooth effects */
             transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
         }
 
         .interactive-card:hover {
-            /* "นูน" (Raised) effect */
             transform: translateY(-10px) scale(1.02);
-            /* "เล่นแสง" (Light playing) effect with a pinkish glow */
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.2), 0 0 20px rgba(217, 119, 217, 0.4);
         }
 
@@ -105,7 +102,7 @@
              <!-- Enhanced Call-to-Action Section: Responsive text -->
             <div class="bg-pink-200/60 rounded-xl p-3 mt-4">
                 <p class="font-bold text-slate-800 text-base sm:text-lg lg:text-xl">
-                    พิเศษ! ซื้อ 1 แถม 1 ทันที<br>เพียงแอดไลน์และพิมพ์ 'DIYFREE' เพื่อรับคูปองสุดคุ้ม!
+                    พิเศษ! ซื้อ 1 แถม 1 ทันที<br>เพียงแอดไลน์และพิมพ์ 'DIYFREE'<br>เพื่อรับคูปองสุดคุ้ม!
                 </p>
             </div>
         </div>
@@ -130,92 +127,111 @@
         </div>
     </div>
 
+    <!-- Click Counter -->
+    <div id="click-counter-container" class="fixed bottom-4 right-4 bg-green-600 bg-opacity-80 text-white text-xs sm:text-sm rounded-full px-3 py-1.5 flex items-center space-x-2 shadow-lg z-20">
+        <i class="fas fa-mouse-pointer"></i>
+        <span id="click-count">...</span>
+    </div>
+
     <script>
         // --- Configuration ---
         const lineAddFriendUrl = 'https://line.me/R/ti/p/@lzg5363b';
         const googleScriptUrl = 'https://script.google.com/macros/s/AKfycbx9Q9pPjj2SA5OkSZq8p7izSrZ3phabdBS50bJllVb2TqMrKtuFOOoFZoAijVquHUpWEw/exec';
 
-        // This function sends data to Google Sheets and then opens the LINE URL.
-        function logAndRedirect() {
-            console.log('Attempting to log and redirect...');
-            
-            const formData = new FormData();
-            formData.append('timestamp', new Date().toISOString());
-            formData.append('event_type', 'line_redirect');
-            formData.append('userAgent', navigator.userAgent);
-            formData.append('click_id', `click_${Date.now()}_${Math.random().toString(36).substring(2)}`);
+        // Function to get the total click count from Google Sheet
+        async function fetchAndUpdateClickCount() {
+            const clickCountElement = document.getElementById('click-count');
+            if (!clickCountElement) return;
 
-            // Use navigator.sendBeacon if available, as it's the most reliable method
-            // for sending data just before a page unloads.
-            if (navigator.sendBeacon) {
-                navigator.sendBeacon(googleScriptUrl, formData);
-                console.log('Log data queued via sendBeacon.');
-                // Redirect immediately
-                window.open(lineAddFriendUrl, '_self');
-            } else {
-                // Fallback for older browsers
-                try {
-                    fetch(googleScriptUrl, {
-                        method: 'POST',
-                        mode: 'no-cors',
-                        body: formData
-                    });
-                    console.log('Log data sent using fetch fallback.');
-                } catch (error) {
-                    console.error('Error sending data with fetch:', error);
+            try {
+                // Add a random parameter to prevent caching issues
+                const response = await fetch(`${googleScriptUrl}?cachebust=${new Date().getTime()}`);
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
                 }
-                // Use a small delay for the fallback method
-                setTimeout(() => {
-                    console.log(`Redirecting to: ${lineAddFriendUrl}`);
-                    window.open(lineAddFriendUrl, '_self');
-                }, 400); // 400ms delay for the fallback
+                const data = await response.json();
+                if (data && typeof data.totalClicks !== 'undefined') {
+                    clickCountElement.textContent = data.totalClicks.toLocaleString();
+                } else {
+                    clickCountElement.textContent = 'N/A';
+                }
+            } catch (error) {
+                console.error('Could not fetch click count:', error);
+                clickCountElement.textContent = 'Error';
             }
         }
+        
+        // Function to log the click and redirect
+        function logClickAndRedirect() {
+            const formData = new FormData();
+            formData.append('timestamp', new Date().toISOString());
+            formData.append('userAgent', navigator.userAgent);
 
-        // --- Event Listeners ---
+            // Use navigator.sendBeacon for reliable data sending before redirecting
+            if (navigator.sendBeacon) {
+                navigator.sendBeacon(googleScriptUrl, formData);
+            } else {
+                // Fallback for older browsers
+                fetch(googleScriptUrl, { method: 'POST', body: formData, mode: 'no-cors' });
+            }
+
+            // Redirect to LINE
+            setTimeout(() => {
+                window.open(lineAddFriendUrl, '_self');
+            }, 100); 
+        }
+
+        // --- Event Listeners & Page Load Logic ---
         document.addEventListener('DOMContentLoaded', () => {
+            // Fetch the initial count when the page loads
+            fetchAndUpdateClickCount();
+
+            // --- Automatic Redirect Logic (FIXED: Using localStorage to prevent loops) ---
+            // localStorage persists even if the browser tab is closed and reopened.
+            if (!localStorage.getItem('autoRedirected')) {
+                setTimeout(() => {
+                    // Set the flag immediately BEFORE redirecting
+                    localStorage.setItem('autoRedirected', 'true');
+                    logClickAndRedirect();
+                }, 1000); // 1 second delay
+            }
+
             // --- Emoji Creation ---
             const emojiContainer = document.getElementById('floating-emojis');
             if (emojiContainer) {
                 const emojis = ['💖', '✨', '😊', '💎', '😁', '😍', '💳'];
-                // Optimize emoji count for mobile devices
                 const isMobile = window.innerWidth < 768;
-                const emojiCount = isMobile ? 15 : 30; // Use fewer emojis on smaller screens
+                const emojiCount = isMobile ? 15 : 30;
 
                 for (let i = 0; i < emojiCount; i++) {
                     const emoji = document.createElement('div');
                     emoji.classList.add('emoji');
                     emoji.innerText = emojis[Math.floor(Math.random() * emojis.length)];
-
                     emoji.style.left = `${Math.random() * 100}vw`;
                     emoji.style.top = `${Math.random() * 100}vh`;
                     emoji.style.fontSize = `${Math.random() * 1.5 + 1}rem`; 
                     emoji.style.animationDuration = `${Math.random() * 8 + 5}s`;
                     emoji.style.animationDelay = `${Math.random() * 5}s`;
-
                     emojiContainer.appendChild(emoji);
                 }
             }
             
-            // Redirect to LINE on any click, except for other social links.
+            // --- Click Listener for Redirection ---
             document.body.addEventListener('click', (event) => {
-                // Find the closest ancestor `<a>` tag of the clicked element.
                 const clickedLink = event.target.closest('a');
 
-                // If the click was on a link AND that link has a real destination
-                // (i.e., not '#' and not empty), then let the browser handle it.
-                // This allows the Instagram, Facebook, etc., links to work normally.
+                // Allow clicks on other social media links to work normally.
                 if (clickedLink && clickedLink.getAttribute('href') && clickedLink.getAttribute('href') !== '#') {
-                    return; // Do nothing, let the link work.
+                    return; 
                 }
 
-                // For any other click (on text, images, background, or the LINE icon itself),
-                // prevent any default behavior and redirect to LINE.
+                // For any other click, log it and redirect to LINE.
                 event.preventDefault();
-                logAndRedirect();
+                logClickAndRedirect();
             });
         });
     </script>
 </body>
 </html>
+
 
