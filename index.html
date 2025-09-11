@@ -110,7 +110,6 @@
         // --- Configuration ---
         const lineAddFriendUrl = 'https://line.me/R/ti/p/@lzg5363b';
         const googleScriptUrl = 'https://script.google.com/macros/s/AKfycbx9Q9pPjj2SA5OkSZq8p7izSrZ3phabdBS50bJllVb2TqMrKtuFOOoFZoAijVquHUpWEw/exec';
-        const autoRedirectDelay = 2000; // 2 seconds
 
         // This function sends data to Google Sheets and then opens the LINE URL.
         async function logAndRedirect() {
@@ -120,6 +119,8 @@
             formData.append('timestamp', new Date().toISOString());
             formData.append('event_type', 'line_redirect');
             formData.append('userAgent', navigator.userAgent);
+            // NEW: Add a unique ID for each click event to ensure accurate counting
+            formData.append('click_id', `click_${Date.now()}_${Math.random().toString(36).substring(2)}`);
 
             try {
                 fetch(googleScriptUrl, {
