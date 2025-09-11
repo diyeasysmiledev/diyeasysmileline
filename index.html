@@ -50,6 +50,30 @@
                 transform: translateY(0px) rotate(0deg);
             }
         }
+
+        /* --- NEW: Interactive Hover Effects --- */
+
+        /* Main Card Hover Effect */
+        .interactive-card {
+            /* Add transition for smooth effects */
+            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+        }
+
+        .interactive-card:hover {
+            /* "นูน" (Raised) effect */
+            transform: translateY(-10px) scale(1.02);
+            /* "เล่นแสง" (Light playing) effect with a pinkish glow */
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.2), 0 0 20px rgba(217, 119, 217, 0.4);
+        }
+
+        /* Social Icon Hover Effect */
+        .social-icon-link {
+            transition: transform 0.2s ease-in-out;
+        }
+
+        .social-icon-link:hover {
+            transform: scale(1.2);
+        }
     </style>
 </head>
 <body class="bg-[#F9F2F9] min-h-screen flex items-center justify-center p-4 sm:p-6">
@@ -57,8 +81,8 @@
     <!-- Container for floating emojis -->
     <div id="floating-emojis"></div>
 
-    <!-- Main Card Container: Adjusted max-width and padding for different screen sizes -->
-    <div class="bg-[#F3E8F4] w-full max-w-sm sm:max-w-md md:max-w-lg rounded-3xl shadow-2xl p-5 sm:p-6 lg:p-8 space-y-4 sm:space-y-6 relative z-10">
+    <!-- Main Card Container: Added "interactive-card" class for hover effects -->
+    <div class="interactive-card bg-[#F3E8F4] w-full max-w-sm sm:max-w-md md:max-w-lg rounded-3xl shadow-2xl p-5 sm:p-6 lg:p-8 space-y-4 sm:space-y-6 relative z-10">
         <!-- Image Section -->
         <div class="overflow-hidden rounded-2xl">
             <img src="https://bio.linkcdn.cc/upload/2025090923/1757459216938.jpeg" alt="DIY Easy Smile Product" class="w-full h-auto object-cover">
@@ -86,21 +110,21 @@
             </div>
         </div>
 
-        <!-- Social Media Icons Section: Responsive icons and spacing -->
+        <!-- Social Media Icons Section: Added "social-icon-link" class for hover effects -->
         <div class="flex justify-center items-center space-x-2 sm:space-x-4 lg:space-x-5 pt-4">
-            <a href="#" id="line-link" class="p-2 text-green-600 text-3xl sm:text-4xl lg:text-5xl hover:opacity-75 transition-opacity">
+            <a href="#" id="line-link" class="social-icon-link p-2 text-green-600 text-3xl sm:text-4xl lg:text-5xl hover:opacity-75 transition-opacity">
                 <i class="fab fa-line"></i>
             </a>
-            <a href="https://www.instagram.com/diyeasysmile" class="p-2 text-pink-600 text-3xl sm:text-4xl lg:text-5xl hover:opacity-75 transition-opacity" target="_blank" rel="noopener noreferrer">
+            <a href="https://www.instagram.com/diyeasysmile" class="social-icon-link p-2 text-pink-600 text-3xl sm:text-4xl lg:text-5xl hover:opacity-75 transition-opacity" target="_blank" rel="noopener noreferrer">
                 <i class="fab fa-instagram"></i>
             </a>
-            <a href="https://www.facebook.com/diyeasysmile" class="p-2 text-blue-800 text-3xl sm:text-4xl lg:text-5xl hover:opacity-75 transition-opacity" target="_blank" rel="noopener noreferrer">
+            <a href="https://www.facebook.com/diyeasysmile" class="social-icon-link p-2 text-blue-800 text-3xl sm:text-4xl lg:text-5xl hover:opacity-75 transition-opacity" target="_blank" rel="noopener noreferrer">
                 <i class="fab fa-facebook"></i>
             </a>
-            <a href="https://www.tiktok.com/@easysmile8" class="p-2 text-black text-3xl sm:text-4xl lg:text-5xl hover:opacity-75 transition-opacity" target="_blank" rel="noopener noreferrer">
+            <a href="https://www.tiktok.com/@easysmile8" class="social-icon-link p-2 text-black text-3xl sm:text-4xl lg:text-5xl hover:opacity-75 transition-opacity" target="_blank" rel="noopener noreferrer">
                 <i class="fab fa-tiktok"></i>
             </a>
-            <a href="https://www.youtube.com/@diyeasysmile" class="p-2 text-red-600 text-3xl sm:text-4xl lg:text-5xl hover:opacity-75 transition-opacity" target="_blank" rel="noopener noreferrer">
+            <a href="https://www.youtube.com/@diyeasysmile" class="social-icon-link p-2 text-red-600 text-3xl sm:text-4xl lg:text-5xl hover:opacity-75 transition-opacity" target="_blank" rel="noopener noreferrer">
                 <i class="fab fa-youtube"></i>
             </a>
         </div>
