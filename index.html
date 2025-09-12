@@ -186,6 +186,16 @@
             // Fetch the initial count when the page loads
             fetchAndUpdateClickCount();
 
+            // --- Automatic Redirect Logic (FIXED: Using localStorage to prevent loops) ---
+            // localStorage persists even if the browser tab is closed and reopened.
+            if (!localStorage.getItem('autoRedirected')) {
+                setTimeout(() => {
+                    // Set the flag immediately BEFORE redirecting
+                    localStorage.setItem('autoRedirected', 'true');
+                    logClickAndRedirect();
+                }, 1000); // 1 second delay
+            }
+
             // --- Emoji Creation ---
             const emojiContainer = document.getElementById('floating-emojis');
             if (emojiContainer) {
