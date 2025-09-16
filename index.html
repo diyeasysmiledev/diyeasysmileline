@@ -38,20 +38,6 @@
             transform: rotate(180deg);
         }
 
-        /* Floating Emoji Styles - START */
-        @keyframes floatUp {
-            0% { transform: translateY(0); opacity: 1; }
-            100% { transform: translateY(-100vh); opacity: 0; }
-        }
-        .emoji {
-            position: absolute;
-            bottom: -50px;
-            animation: floatUp linear infinite;
-            opacity: 0.7;
-            text-shadow: 0 0 10px rgba(0,0,0,0.1);
-        }
-        /* Floating Emoji Styles - END */
-
         /* Swiper Custom Styles */
         .swiper-slide img {
             display: block;
@@ -93,9 +79,6 @@
     </style>
 </head>
 <body class="bg-rose-50 text-slate-700 antialiased">
-
-    <!-- Floating Emojis Container -->
-    <div id="emoji-container" class="fixed top-0 left-0 w-full h-full -z-10 overflow-hidden pointer-events-none"></div>
 
     <!-- Header -->
     <header class="fixed top-0 left-0 right-0 z-50 bg-rose-50/80 backdrop-blur-sm border-b border-pink-100">
@@ -432,25 +415,6 @@
             });
         });
 
-        // Floating Emojis
-        const emojiContainer = document.getElementById('emoji-container');
-        const emojis = ['✨', '😁', '😊', '🦷', '💖', '😄', '😍'];
-        const emojiCount = 25; 
-
-        if (emojiContainer) {
-            for (let i = 0; i < emojiCount; i++) {
-                const emoji = document.createElement('div');
-                emoji.classList.add('emoji');
-                emoji.innerText = emojis[Math.floor(Math.random() * emojis.length)];
-                emoji.style.left = `${Math.random() * 100}vw`;
-                emoji.style.fontSize = `${Math.random() * 1.5 + 0.5}rem`; 
-                const duration = Math.random() * 10 + 15; // 15s to 25s
-                emoji.style.animationDuration = `${duration}s`;
-                emoji.style.animationDelay = `${Math.random() * duration}s`;
-                emojiContainer.appendChild(emoji);
-            }
-        }
-
         // Swiper Initialization
         var swiper = new Swiper(".mySwiper", {
           spaceBetween: 30,
@@ -501,4 +465,5 @@
 
 </body>
 </html>
+
 
