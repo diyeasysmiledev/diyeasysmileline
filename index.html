@@ -3,234 +3,487 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DIY.EASY SMILE</title>
-    <!-- Tailwind CSS for styling -->
+    <title>DIY.EASYSMILE - จัดฟันใสเพื่อรอยยิ้มที่สมบูรณ์แบบ</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts (Kanit for Thai) -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;500;700&display=swap" rel="stylesheet">
-    <!-- Font Awesome for icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" xintegrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Swiper's CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+
     <style>
-        /* Apply Kanit font to the entire page */
         body {
             font-family: 'Kanit', sans-serif;
-            -webkit-tap-highlight-color: transparent; /* Remove tap highlight on mobile */
         }
-
-        /* --- Floating Emoji Styles --- */
-        #floating-emojis {
-            position: fixed;
-            top: 0;
-            left: 0;
+        .hero-gradient {
+            background: radial-gradient(circle at 50% 0%, rgba(251, 113, 133, 0.1), rgba(255, 255, 255, 0) 50%);
+        }
+        .cta-gradient {
+            background: linear-gradient(90deg, #f472b6 0%, #fb7185 100%);
+        }
+        
+        .step-item::before {
+            content: '';
+            position: absolute;
+            left: 20px;
+            top: 40px;
+            bottom: -20px;
+            width: 2px;
+            background: #f472b6;
+            z-index: -1;
+        }
+        .step-item:last-child::before {
+            display: none;
+        }
+        .faq-item[open] .faq-arrow {
+            transform: rotate(180deg);
+        }
+        /* Swiper Custom Styles */
+        .swiper-slide img {
+            display: block;
             width: 100%;
             height: 100%;
+            object-fit: cover;
+        }
+        .swiper-button-next, .swiper-button-prev {
+            color: #f472b6 !important;
+            --swiper-navigation-size: 32px;
+        }
+        .swiper-pagination-bullet-active {
+            background: #f472b6 !important;
+        }
+        .swiper-container {
+            width: 100%;
+            aspect-ratio: 1 / 1; /* Make images square */
+        }
+        .testimonial-swiper-container .swiper-slide {
+            background: #fff;
+            border-radius: 1.5rem; /* Increased rounding */
             overflow: hidden;
-            z-index: 0;
-            pointer-events: none; /* Make sure emojis don't block clicks */
+            box-shadow: 0 10px 15px -3px rgba(244, 63, 94, 0.07), 0 4px 6px -2px rgba(244, 63, 94, 0.05);
+            border: 1px solid #fce7f3;
+            transform: scale(0.95);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
-
-        .emoji {
-            position: absolute;
-            opacity: 0.6;
-            animation: float ease-in-out infinite;
-            user-select: none;
-            font-size: 2rem; /* Base size */
+        .testimonial-swiper-container .swiper-slide-active,
+        .testimonial-swiper-container .swiper-slide:hover {
+            transform: scale(1);
+            box-shadow: 0 20px 25px -5px rgba(244, 63, 94, 0.1), 0 10px 10px -5px rgba(244, 63, 94, 0.04);
         }
-
-        @keyframes float {
-            0% {
-                transform: translateY(0px) rotate(0deg);
-            }
-            50% {
-                transform: translateY(-25px) rotate(15deg);
-            }
-            100% {
-                transform: translateY(0px) rotate(0deg);
-            }
-        }
-
-        /* --- Interactive Hover Effects --- */
-
-        /* Main Card Hover Effect */
-        .interactive-card {
-            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
-        }
-
-        .interactive-card:hover {
-            transform: translateY(-10px) scale(1.02);
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.2), 0 0 20px rgba(217, 119, 217, 0.4);
-        }
-
-        /* Social Icon Hover Effect */
-        .social-icon-link {
-            transition: transform 0.2s ease-in-out;
-        }
-
-        .social-icon-link:hover {
-            transform: scale(1.2);
+        .testimonial-swiper-container .swiper-slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            aspect-ratio: 1 / 1; /* Make images square */
         }
     </style>
 </head>
-<body class="bg-[#F9F2F9] min-h-screen flex items-center justify-center p-4 sm:p-6">
+<body class="bg-rose-50 text-slate-700 antialiased">
 
-    <!-- Container for floating emojis -->
-    <div id="floating-emojis"></div>
+    <!-- Floating Emojis Container -->
+    <div id="emoji-container" class="fixed top-0 left-0 w-full h-full -z-10 overflow-hidden pointer-events-none"></div>
 
-    <!-- Main Card Container: Added "interactive-card" class for hover effects -->
-    <div class="interactive-card bg-[#F3E8F4] w-full max-w-sm sm:max-w-md md:max-w-lg rounded-3xl shadow-2xl p-5 sm:p-6 lg:p-8 space-y-4 sm:space-y-6 relative z-10">
-        <!-- Image Section -->
-        <div class="overflow-hidden rounded-2xl">
-            <img src="https://bio.linkcdn.cc/upload/2025090923/1757459216938.jpeg" alt="DIY Easy Smile Product" class="w-full h-auto object-cover">
+    <!-- Header -->
+    <header class="fixed top-0 left-0 right-0 z-50 bg-rose-50/80 backdrop-blur-sm border-b border-pink-100">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="#" class="text-2xl font-bold text-slate-900">
+                <span class="text-pink-400">DIY.</span>EASYSMILE
+            </a>
+            <nav class="hidden md:flex space-x-8 items-center text-slate-600 font-medium">
+                <a href="#features" class="hover:text-pink-400 transition-colors">คุณสมบัติ</a>
+                <a href="#process" class="hover:text-pink-400 transition-colors">ขั้นตอน</a>
+                <a href="#reviews" class="hover:text-pink-400 transition-colors">รีวิว</a>
+                <a href="#faq" class="hover:text-pink-400 transition-colors">คำถามที่พบบ่อย</a>
+            </nav>
+            <a href="https://lin.ee/UStHcEy" target="_blank" class="hidden md:inline-block bg-pink-400 hover:bg-pink-500 text-white font-semibold py-2 px-4 rounded-lg transition-colors shadow-md shadow-pink-200">
+                ปรึกษาฟรี
+            </a>
+            <button id="mobile-menu-button" class="md:hidden text-slate-800">
+                <i data-lucide="menu"></i>
+            </button>
         </div>
-
-        <!-- Text Content Section: Fully responsive text sizes -->
-        <div class="text-center text-slate-600 space-y-3">
-            <h1 class="text-3xl sm:text-4xl lg:text-5xl font-bold text-slate-700">DIY.EASY SMILE</h1>
-            <div class="space-y-2 text-sm sm:text-base lg:text-lg">
-                <p class="font-medium">
-                    <span class="font-bold text-slate-800">สะดวก:</span> ทำได้เองที่บ้าน ไม่ต้องเสียเวลาเข้าคลินิกบ่อย ๆ
-                </p>
-                <p class="font-medium">
-                    <span class="font-bold text-slate-800">คุ้มค่า:</span> ประหยัดกว่าการจัดฟันแบบเดิม
-                </p>
-                <p class="font-medium">
-                    <span class="font-bold text-slate-800">มั่นใจได้:</span> เห็นผลจริงและปลอดภัย
-                </p>
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden bg-rose-50">
+            <a href="#features" class="block py-3 px-6 hover:bg-pink-100 font-medium">คุณสมบัติ</a>
+            <a href="#process" class="block py-3 px-6 hover:bg-pink-100 font-medium">ขั้นตอน</a>
+            <a href="#reviews" class="block py-3 px-6 hover:bg-pink-100 font-medium">รีวิว</a>
+            <a href="#faq" class="block py-3 px-6 hover:bg-pink-100 font-medium">คำถามที่พบบ่อย</a>
+            <div class="p-4">
+                <a href="https://lin.ee/UStHcEy" target="_blank" class="block text-center bg-pink-400 hover:bg-pink-500 text-white font-semibold py-3 px-4 rounded-lg transition-colors shadow-md shadow-pink-200">ปรึกษาฟรี</a>
             </div>
-             <!-- Enhanced Call-to-Action Section: Responsive text -->
-            <div class="bg-pink-200/60 rounded-xl p-3 mt-4">
-                <p class="font-bold text-slate-800 text-base sm:text-lg lg:text-xl">
-                    พิเศษ! ซื้อ 1 แถม 1 ทันที<br>เพียงแอดไลน์และพิมพ์ 'DIYFREE'<br>เพื่อรับคูปองสุดคุ้ม!
+        </div>
+    </header>
+
+    <main>
+        <!-- Hero Section -->
+        <section class="pt-32 pb-20 hero-gradient">
+            <div class="container mx-auto px-6 text-center">
+                <div class="bg-pink-400/10 text-pink-500 text-sm font-medium inline-flex items-center px-4 py-1 rounded-full mb-4 border border-pink-200">
+                    เทคโนโลยีจัดฟันใสแห่งอนาคต
+                </div>
+                <h1 class="text-4xl md:text-6xl font-bold leading-tight mb-4 text-slate-900">
+                    ปลดล็อกรอยยิ้มที่สมบูรณ์แบบ<br class="hidden md:block">
+                    <span class="text-pink-400">ด้วยเครื่องมือจัดฟันใส</span>
+                </h1>
+                <p class="text-lg md:text-xl text-slate-600 max-w-3xl mx-auto mb-8">
+                    สัมผัสประสบการณ์จัดฟันที่มองไม่เห็น สบายกว่า และเห็นผลลัพธ์ไวกว่าที่เคย ด้วยเทคโนโลยี 3D Smile Design by DIy.EASYSMILE เฉพาะบุคคลสำหรับคุณ
                 </p>
+                <div class="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-4">
+                    <a href="https://lin.ee/UStHcEy" target="_blank" class="cta-gradient text-white font-bold py-3 px-8 rounded-full text-lg hover:opacity-90 transition-opacity shadow-lg shadow-pink-400/30 w-full sm:w-auto">
+                        ประเมินรอยยิ้มฟรี
+                    </a>
+                    <a href="#process" class="flex items-center justify-center text-slate-600 hover:text-slate-900 transition-colors font-medium w-full sm:w-auto">
+                        <span>ดูขั้นตอน</span>
+                        <i data-lucide="arrow-right" class="ml-2 w-5 h-5"></i>
+                    </a>
+                </div>
+                <div class="mt-16">
+                    <!-- Slideshow Section -->
+                    <div class="relative w-full max-w-3xl mx-auto swiper-container rounded-2xl shadow-2xl shadow-rose-900/10 overflow-hidden">
+                        <!-- Swiper -->
+                        <div class="swiper mySwiper">
+                            <div class="swiper-wrapper">
+                                <!-- 
+                                  สำคัญ: เพื่อให้รูปแสดงผลแน่นอน 100% 
+                                  แนะนำให้อัปโหลดรูปของคุณที่เว็บฝากรูป เช่น postimages.org 
+                                  แล้วนำ "ลิงก์ตรง" (Direct Link) มาใส่ใน src="..." ด้านล่างนี้
+                                -->
+                                <div class="swiper-slide"><img src="https://img5.pic.in.th/file/secure-sv1/1757444079776.jpg" alt="รีวิวจัดฟันใส 1"></div>
+                                <div class="swiper-slide"><img src="https://img2.pic.in.th/pic/1free1.jpg" alt="รีวิวจัดฟันใส 2"></div>
+                                <div class="swiper-slide"><img src="https://img5.pic.in.th/file/secure-sv1/1757444605178.jpg" alt="รีวิวจัดฟันใส 3"></div>
+                                <div class="swiper-slide"><img src="https://img5.pic.in.th/file/secure-sv1/1757444523877.jpg" alt="รีวิวจัดฟันใส 4"></div>
+                                <!-- คุณสามารถเพิ่ม <div class="swiper-slide">...</div> ได้ตามจำนวนรูปที่ต้องการ -->
+                            </div>
+                        </div>
+                        <div class="swiper-button-next"></div>
+                        <div class="swiper-button-prev"></div>
+                        <div class="swiper-pagination"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features Section -->
+        <section id="features" class="py-20 bg-slate-800">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl md:text-4xl font-bold text-white">ทำไมต้องเลือกจัดฟันใสกับเรา?</h2>
+                    <p class="text-slate-400 mt-2">สัมผัสความแตกต่างที่เหนือกว่าการจัดฟันแบบเดิมๆ</p>
+                </div>
+                <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+                    <!-- Feature 1 -->
+                    <div class="bg-slate-700/50 p-6 rounded-2xl text-center transition-all duration-300 hover:bg-slate-700 hover:scale-105 hover:shadow-xl hover:shadow-pink-400/10 border border-slate-700">
+                        <div class="inline-block bg-pink-400/10 text-pink-400 p-4 rounded-xl mb-4">
+                            <i data-lucide="eye-off" class="w-8 h-8"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-2 text-white">แทบมองไม่เห็น</h3>
+                        <p class="text-slate-400">เครื่องมือใสจนคนอื่นไม่สังเกตว่าคุณกำลังจัดฟัน</p>
+                    </div>
+                    <!-- Feature 2 -->
+                    <div class="bg-slate-700/50 p-6 rounded-2xl text-center transition-all duration-300 hover:bg-slate-700 hover:scale-105 hover:shadow-xl hover:shadow-pink-400/10 border border-slate-700">
+                        <div class="inline-block bg-pink-400/10 text-pink-400 p-4 rounded-xl mb-4">
+                            <i data-lucide="smile-plus" class="w-8 h-8"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-2 text-white">ใส่สบาย ไม่ระคายเคือง</h3>
+                        <p class="text-slate-400">ไม่มีเหล็กและลวดที่ก่อให้เกิดการระคายเคืองในช่องปาก</p>
+                    </div>
+                    <!-- Feature 3 -->
+                    <div class="bg-slate-700/50 p-6 rounded-2xl text-center transition-all duration-300 hover:bg-slate-700 hover:scale-105 hover:shadow-xl hover:shadow-pink-400/10 border border-slate-700">
+                        <div class="inline-block bg-pink-400/10 text-pink-400 p-4 rounded-xl mb-4">
+                            <i data-lucide="utensils-crossed" class="w-8 h-8"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-2 text-white">ถอดง่าย ทานสะดวก</h3>
+                        <p class="text-slate-400">ถอดเครื่องมือได้ง่ายๆ เมื่อต้องการทานอาหารหรือแปรงฟัน</p>
+                    </div>
+                    <!-- Feature 4 -->
+                    <div class="bg-slate-700/50 p-6 rounded-2xl text-center transition-all duration-300 hover:bg-slate-700 hover:scale-105 hover:shadow-xl hover:shadow-pink-400/10 border border-slate-700">
+                        <div class="inline-block bg-pink-400/10 text-pink-400 p-4 rounded-xl mb-4">
+                            <i data-lucide="calendar-check" class="w-8 h-8"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-2 text-white">เห็นผลลัพธ์รวดเร็ว</h3>
+                        <p class="text-slate-400">ใช้เวลาจัดฟันน้อยกว่าและติดตามผลกันทุก STEP ทางระบบไลน์</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Process Section -->
+        <section id="process" class="py-20">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl md:text-4xl font-bold text-slate-800">ขั้นตอนง่ายๆ สู่รอยยิ้มในฝัน</h2>
+                    <p class="text-slate-500 mt-2">เริ่มต้นการเปลี่ยนแปลงใน 4 ขั้นตอน</p>
+                    <a href="https://youtu.be/6Lb8_LH-QGk?si=G711IK2M6ocSiHaP" target="_blank" class="mt-6 inline-flex items-center bg-white text-pink-400 font-semibold py-2 px-5 rounded-lg transition-all duration-300 hover:bg-pink-400 hover:text-white shadow-md hover:shadow-lg border border-pink-200 hover:border-pink-400">
+                        <i data-lucide="youtube" class="w-5 h-5 mr-2"></i>
+                        <span>ชมวิดีโอขั้นตอน</span>
+                    </a>
+                </div>
+                <div class="max-w-3xl mx-auto">
+                    <div class="relative flex flex-col space-y-12">
+                        <!-- Step 1 -->
+                        <div class="step-item relative flex items-start">
+                            <div class="flex-shrink-0 w-10 h-10 bg-pink-400 rounded-full flex items-center justify-center text-white font-bold mr-6">1</div>
+                            <div>
+                                <h3 class="text-xl font-semibold text-pink-400 mb-2">สแกนฟัน 3 มิติ</h3>
+                                <p class="text-slate-600">เราใช้เทคโนโลยี 3 มิติ สแกนแบบพิมพ์ฟันของคุณอย่างแม่นยำเพื่อสร้างแบบจำลอง 3 มิติ สามารถสั่งทำ ชุดต่อๆไปได้ โดยไม่ต้องพิมพ์ปากใหม่ทุกครั้งที่สั่งทำ </p>
+                            </div>
+                        </div>
+                        <!-- Step 2 -->
+                        <div class="step-item relative flex items-start">
+                            <div class="flex-shrink-0 w-10 h-10 bg-pink-400 rounded-full flex items-center justify-center text-white font-bold mr-6">2</div>
+                            <div>
+                                <h3 class="text-xl font-semibold text-pink-400 mb-2">ออกแบบการรักษา</h3>
+                                <p class="text-slate-600">ทีมงานจะวางแผนการเคลื่อนที่ของฟันด้วยซอฟต์แวร์ 3 มิติ คุณจะเห็นผลลัพธ์สุดท้ายเมื่อเริ่มสั่งทำ STEP แรก</p>
+                            </div>
+                        </div>
+                        <!-- Step 3 -->
+                        <div class="step-item relative flex items-start">
+                            <div class="flex-shrink-0 w-10 h-10 bg-pink-400 rounded-full flex items-center justify-center text-white font-bold mr-6">3</div>
+                            <div>
+                                <h3 class="text-xl font-semibold text-pink-400 mb-2">รับเครื่องมือจัดฟันใส DIY.EASYSMILE </h3>
+                                <p class="text-slate-600">เครื่องมือของคุณจะถูกผลิตขึ้นเฉพาะบุคคลจากวัสดุ รีเทนเนอร์ใส ที่ยืดหยุ่นและมีประสิทธิภาพสูง</p>
+                            </div>
+                        </div>
+                        <!-- Step 4 -->
+                        <div class="step-item relative flex items-start">
+                           <div class="flex-shrink-0 w-10 h-10 bg-pink-400 rounded-full flex items-center justify-center text-white font-bold mr-6">4</div>
+                            <div>
+                                <h3 class="text-xl font-semibold text-pink-400 mb-2">เปลี่ยน STEP ได้เองที่บ้าน</h3>
+                                <p class="text-slate-600">คุณจะเปลี่ยนเครื่องมือ STEP ใหม่ทุก 15 วัน และส่งรูปฟันที่ใส่ชิ้นงานแต่ละ STEP เพื่อติดตามผลเป็นระยะๆ จนกว่าจะได้รอยยิ้มที่สมบูรณ์แบบ</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Testimonials Section -->
+        <section id="reviews" class="py-20 bg-white overflow-hidden">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl md:text-4xl font-bold text-slate-800">เสียงตอบรับจากผู้ใช้งานจริง</h2>
+                    <p class="text-slate-500 mt-2">ความประทับใจที่เปลี่ยนชีวิตและรอยยิ้มของพวกเขา</p>
+                </div>
+                <!-- New Testimonial Swiper -->
+                <div class="relative w-full testimonial-swiper-container">
+                     <div class="swiper testimonialSwiper py-4">
+                        <div class="swiper-wrapper">
+                            <!-- Slide 1 -->
+                            <div class="swiper-slide">
+                                <img src="https://img2.pic.in.th/pic/IMG_4420141dc51983648529.jpg" alt="รีวิวลูกค้า 1">
+                            </div>
+                             <!-- Slide 2 -->
+                            <div class="swiper-slide">
+                                <img src="https://img2.pic.in.th/pic/IMG_44210f5ac84493e1d2ea.jpg" alt="รีวิวลูกค้า 2">
+                            </div>
+                             <!-- Slide 3 -->
+                            <div class="swiper-slide">
+                                <img src="https://img5.pic.in.th/file/secure-sv1/IMG_2161ac880de20ac3e496.jpg" alt="รีวิวลูกค้า 3">
+                            </div>
+                             <!-- Slide 4 -->
+                            <div class="swiper-slide">
+                                <img src="https://img5.pic.in.th/file/secure-sv1/IMG_216335d01a379362e314.jpg" alt="รีวิวลูกค้า 4">
+                            </div>
+                             <!-- Slide 5 -->
+                            <div class="swiper-slide">
+                                <img src="https://img2.pic.in.th/pic/IMG_2162255caa9da2a30033.jpg" alt="รีวิวลูกค้า 5">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="swiper-button-next"></div>
+                    <div class="swiper-button-prev"></div>
+                    <div class="swiper-pagination mt-8 relative"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- FAQ Section -->
+        <section id="faq" class="py-20">
+            <div class="container mx-auto px-6 max-w-4xl">
+                 <div class="text-center mb-12">
+                    <h2 class="text-3xl md:text-4xl font-bold text-slate-800">คำถามที่พบบ่อย</h2>
+                    <p class="text-slate-500 mt-2">เราได้รวบรวมคำตอบสำหรับคำถามที่คุณอาจสงสัย</p>
+                </div>
+                <div class="space-y-4">
+                    <!-- FAQ Item 1 -->
+                    <details class="faq-item bg-white p-6 rounded-lg cursor-pointer group border border-pink-100 shadow-sm hover:shadow-lg hover:shadow-pink-100 transition-shadow">
+                        <summary class="flex justify-between items-center font-semibold text-lg text-slate-800">
+                            จัดฟันใสราคาเท่าไหร่?
+                            <i data-lucide="chevron-down" class="faq-arrow w-5 h-5 transition-transform"></i>
+                        </summary>
+                        <p class="text-slate-600 mt-4">
+                            ราคาของการจัดฟันใสขึ้นอยู่กับความซับซ้อนของปัญหาฟันของแต่ละบุคคล โดยทั่วไปจะเริ่มต้นที่ 2,190บาท/STEP  เรามีแผนการชำระเงินแบบผ่อนชำระเพื่อช่วยให้คุณเข้าถึงการรักษาได้ง่ายขึ้น สามารถนัดปรึกษาเพื่อประเมินราคาที่แน่นอนได้ฟรี
+                        </p>
+                    </details>
+                    <!-- FAQ Item 2 -->
+                    <details class="faq-item bg-white p-6 rounded-lg cursor-pointer group border border-pink-100 shadow-sm hover:shadow-lg hover:shadow-pink-100 transition-shadow">
+                        <summary class="flex justify-between items-center font-semibold text-lg text-slate-800">
+                            ใช้ระยะเวลานานแค่ไหน?
+                             <i data-lucide="chevron-down" class="faq-arrow w-5 h-5 transition-transform"></i>
+                        </summary>
+                         <p class="text-slate-600 mt-4">
+                            ระยะเวลาในการรักษาจะแตกต่างกันไปในแต่ละบุคคล โดยเฉลี่ยจะใช้เวลาประมาณ 3-5 เดือน 1STEP ปรับฟันได้ 0.5mm ใส่วันละ 22 ชั่วโมง ซึ่งมักจะเร็วกว่าการจัดฟันแบบโลหะทั่วไป ทันตแพทย์จะสามารถประเมินระยะเวลาที่ชัดเจนให้คุณได้หลังจากสแกนฟัน 3 มิติ
+                        </p>
+                    </details>
+                    <!-- FAQ Item 3 -->
+                    <details class="faq-item bg-white p-6 rounded-lg cursor-pointer group border border-pink-100 shadow-sm hover:shadow-lg hover:shadow-pink-100 transition-shadow">
+                        <summary class="flex justify-between items-center font-semibold text-lg text-slate-800">
+                            จัดฟันใสเจ็บไหม?
+                             <i data-lucide="chevron-down" class="faq-arrow w-5 h-5 transition-transform"></i>
+                        </summary>
+                         <p class="text-slate-600 mt-4">
+                           ในช่วงแรกที่เปลี่ยนเครื่องมือชุดใหม่อาจมีความรู้สึกตึงๆ หรือไม่สบายเล็กน้อย ซึ่งเป็นสัญญาณว่าฟันกำลังเคลื่อนที่ อาการนี้มักจะหายไปภายใน 1-2 วัน โดยรวมแล้วการจัดฟันใสถือว่าเจ็บน้อยกว่าการจัดฟันแบบโลหะมาก
+                        </p>
+                    </details>
+                    <!-- FAQ Item 4 -->
+                    <details class="faq-item bg-white p-6 rounded-lg cursor-pointer group border border-pink-100 shadow-sm hover:shadow-lg hover:shadow-pink-100 transition-shadow">
+                        <summary class="flex justify-between items-center font-semibold text-lg text-slate-800">
+                            ต้องดูแลรักษาอย่างไร?
+                             <i data-lucide="chevron-down" class="faq-arrow w-5 h-5 transition-transform"></i>
+                        </summary>
+                         <p class="text-slate-600 mt-4">
+                            การดูแลรักษานั้นง่ายมาก เพียงถอดเครื่องมือออกทุกครั้งก่อนรับประทานอาหารและดื่มเครื่องดื่ม (ยกเว้นน้ำเปล่า) และทำความสะอาดเครื่องมือด้วยแปรงสีฟันขนนุ่มและยาสีฟันอ่อนๆ หรือเม็ดฟู่ทำความสะอาด นอกจากนี้ควรแปรงฟันและใช้ไหมขัดฟันตามปกติ
+                        </p>
+                    </details>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA Section -->
+        <section id="contact" class="py-20">
+            <div class="container mx-auto px-6">
+                <div class="bg-gradient-to-r from-slate-800 to-slate-900 rounded-2xl p-10 md:p-16 text-center shadow-2xl shadow-slate-300">
+                    <h2 class="text-3xl md:text-4xl font-bold mb-4 text-white">พร้อมสำหรับรอยยิ้มใหม่ของคุณแล้วหรือยัง?</h2>
+                    <p class="text-slate-300 max-w-2xl mx-auto mb-8">
+                        อย่ารอช้า! ส่งรูปฟันเพื่อประเมินเบื้องต้นทางไลน์ พิมพ์ฟันเพื่อสแกนฟัน 3 มิติและรับคำปรึกษาจากผู้เชี่ยวชาญของเราได้ฟรี ไม่มีค่าใช้จ่ายและไม่มีข้อผูกมัด
+                    </p>
+                     <a href="https://lin.ee/UStHcEy" target="_blank" class="bg-pink-400 text-white font-bold py-3 px-8 rounded-full text-lg hover:bg-pink-500 transition-colors shadow-lg shadow-pink-400/30">
+                        นัดปรึกษาออนไลน์ ฟรี!
+                    </a>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-100 border-t border-slate-200">
+        <div class="container mx-auto px-6 py-8">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="mb-4 md:mb-0 text-center md:text-left">
+                     <a href="#" class="text-2xl font-bold text-slate-900">
+                        <span class="text-pink-400">DIY.</span>EASYSMILE
+                    </a>
+                    <p class="text-slate-500 mt-1">เทคโนโลยีเพื่อรอยยิ้มที่สมบูรณ์แบบ</p>
+                </div>
+                <div class="flex space-x-6">
+                    <a href="https://m.me/diyeasysmile?ref=ads2025" target="_blank" class="text-slate-500 hover:text-pink-400"><i data-lucide="facebook" class="w-6 h-6"></i></a>
+                    <a href="https://lin.ee/UStHcEy" target="_blank" class="text-slate-500 hover:text-pink-400"><i data-lucide="message-circle" class="w-6 h-6"></i></a> <!-- Line Icon -->
+                    <a href="https://www.youtube.com/@diyeasysmile" target="_blank" class="text-slate-500 hover:text-pink-400"><i data-lucide="youtube" class="w-6 h-6"></i></a>
+                </div>
+            </div>
+            <div class="mt-8 border-t border-slate-200 pt-8 text-center text-slate-500 text-sm">
+                <p>&copy; 2025 DIY.EASYSMILE. All Rights Reserved.</p>
             </div>
         </div>
+    </footer>
 
-        <!-- Social Media Icons Section: Added "social-icon-link" class for hover effects -->
-        <div class="flex justify-center items-center space-x-2 sm:space-x-4 lg:space-x-5 pt-4">
-            <a href="#" id="line-link" class="social-icon-link p-2 text-green-600 text-3xl sm:text-4xl lg:text-5xl hover:opacity-75 transition-opacity">
-                <i class="fab fa-line"></i>
-            </a>
-            <a href="https://www.instagram.com/diyeasysmile" class="social-icon-link p-2 text-pink-600 text-3xl sm:text-4xl lg:text-5xl hover:opacity-75 transition-opacity" target="_blank" rel="noopener noreferrer">
-                <i class="fab fa-instagram"></i>
-            </a>
-            <a href="https://www.facebook.com/diyeasysmile" class="social-icon-link p-2 text-blue-800 text-3xl sm:text-4xl lg:text-5xl hover:opacity-75 transition-opacity" target="_blank" rel="noopener noreferrer">
-                <i class="fab fa-facebook"></i>
-            </a>
-            <a href="https://www.tiktok.com/@easysmile8" class="social-icon-link p-2 text-black text-3xl sm:text-4xl lg:text-5xl hover:opacity-75 transition-opacity" target="_blank" rel="noopener noreferrer">
-                <i class="fab fa-tiktok"></i>
-            </a>
-            <a href="https://www.youtube.com/@diyeasysmile" class="social-icon-link p-2 text-red-600 text-3xl sm:text-4xl lg:text-5xl hover:opacity-75 transition-opacity" target="_blank" rel="noopener noreferrer">
-                <i class="fab fa-youtube"></i>
-            </a>
-        </div>
-    </div>
-
-    <!-- Click Counter -->
-    <div id="click-counter-container" class="fixed bottom-4 right-4 bg-green-600 bg-opacity-80 text-white text-xs sm:text-sm rounded-full px-3 py-1.5 flex items-center space-x-2 shadow-lg z-20">
-        <i class="fas fa-mouse-pointer"></i>
-        <span id="click-count">...</span>
-    </div>
+    <!-- Swiper's JS -->
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 
     <script>
-        // --- Configuration ---
-        const lineAddFriendUrl = 'https://line.me/R/ti/p/@lzg5363b';
-        const googleScriptUrl = 'https://script.google.com/macros/s/AKfycbx9Q9pPjj2SA5OkSZq8p7izSrZ3phabdBS50bJllVb2TqMrKtuFOOoFZoAijVquHUpWEw/exec';
+        lucide.createIcons();
 
-        // Function to get the total click count from Google Sheet
-        async function fetchAndUpdateClickCount() {
-            const clickCountElement = document.getElementById('click-count');
-            if (!clickCountElement) return;
+        // Mobile menu toggle
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+        mobileMenuButton.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
 
-            try {
-                // Add a random parameter to prevent caching issues
-                const response = await fetch(`${googleScriptUrl}?cachebust=${new Date().getTime()}`);
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const targetElement = document.querySelector(this.getAttribute('href'));
+                if (targetElement) {
+                    targetElement.scrollIntoView({
+                        behavior: 'smooth'
+                    });
                 }
-                const data = await response.json();
-                if (data && typeof data.totalClicks !== 'undefined') {
-                    clickCountElement.textContent = data.totalClicks.toLocaleString();
-                } else {
-                    clickCountElement.textContent = 'N/A';
+                // Close mobile menu on link click
+                if (!mobileMenu.classList.contains('hidden')) {
+                    mobileMenu.classList.add('hidden');
                 }
-            } catch (error) {
-                console.error('Could not fetch click count:', error);
-                clickCountElement.textContent = 'Error';
-            }
-        }
-        
-        // Function to log the click and redirect
-        function logClickAndRedirect() {
-            const formData = new FormData();
-            formData.append('timestamp', new Date().toISOString());
-            formData.append('userAgent', navigator.userAgent);
-
-            // Use navigator.sendBeacon for reliable data sending before redirecting
-            if (navigator.sendBeacon) {
-                navigator.sendBeacon(googleScriptUrl, formData);
-            } else {
-                // Fallback for older browsers
-                fetch(googleScriptUrl, { method: 'POST', body: formData, mode: 'no-cors' });
-            }
-
-            // Redirect to LINE
-            setTimeout(() => {
-                window.open(lineAddFriendUrl, '_self');
-            }, 100); 
-        }
-
-        // --- Event Listeners & Page Load Logic ---
-        document.addEventListener('DOMContentLoaded', () => {
-            // Fetch the initial count when the page loads
-            fetchAndUpdateClickCount();
-
-            // --- Automatic Redirect Logic (FIXED: Using localStorage to prevent loops) ---
-            // localStorage persists even if the browser tab is closed and reopened.
-            if (!localStorage.getItem('autoRedirected')) {
-                setTimeout(() => {
-                    // Set the flag immediately BEFORE redirecting
-                    localStorage.setItem('autoRedirected', 'true');
-                    logClickAndRedirect();
-                }, 1000); // 1 second delay
-            }
-
-            // --- Emoji Creation ---
-            const emojiContainer = document.getElementById('floating-emojis');
-            if (emojiContainer) {
-                const emojis = ['💖', '✨', '😊', '💎', '😁', '😍', '💳'];
-                const isMobile = window.innerWidth < 768;
-                const emojiCount = isMobile ? 15 : 30;
-
-                for (let i = 0; i < emojiCount; i++) {
-                    const emoji = document.createElement('div');
-                    emoji.classList.add('emoji');
-                    emoji.innerText = emojis[Math.floor(Math.random() * emojis.length)];
-                    emoji.style.left = `${Math.random() * 100}vw`;
-                    emoji.style.top = `${Math.random() * 100}vh`;
-                    emoji.style.fontSize = `${Math.random() * 1.5 + 1}rem`; 
-                    emoji.style.animationDuration = `${Math.random() * 8 + 5}s`;
-                    emoji.style.animationDelay = `${Math.random() * 5}s`;
-                    emojiContainer.appendChild(emoji);
-                }
-            }
-            
-            // --- Click Listener for Redirection ---
-            document.body.addEventListener('click', (event) => {
-                const clickedLink = event.target.closest('a');
-
-                // Allow clicks on other social media links to work normally.
-                if (clickedLink && clickedLink.getAttribute('href') && clickedLink.getAttribute('href') !== '#') {
-                    return; 
-                }
-
-                // For any other click, log it and redirect to LINE.
-                event.preventDefault();
-                logClickAndRedirect();
             });
         });
+
+        // Floating Emojis
+        const emojiContainer = document.getElementById('emoji-container');
+        const emojis = ['✨', '😁', '😊', '🦷', '💖', '😄', '😍'];
+        const emojiCount = 25; 
+
+        if (emojiContainer) {
+            for (let i = 0; i < emojiCount; i++) {
+                const emoji = document.createElement('div');
+                emoji.classList.add('emoji');
+                emoji.innerText = emojis[Math.floor(Math.random() * emojis.length)];
+                emoji.style.left = `${Math.random() * 100}vw`;
+                emoji.style.fontSize = `${Math.random() * 1.5 + 0.5}rem`; 
+                const duration = Math.random() * 10 + 15; // 15s to 25s
+                emoji.style.animationDuration = `${duration}s`;
+                emoji.style.animationDelay = `${Math.random() * duration}s`;
+                emojiContainer.appendChild(emoji);
+            }
+        }
+
+        // Swiper Initialization
+        var swiper = new Swiper(".mySwiper", {
+          spaceBetween: 30,
+          centeredSlides: true,
+          autoplay: {
+            delay: 3500,
+            disableOnInteraction: false,
+          },
+          pagination: {
+            el: ".swiper-pagination",
+            clickable: true,
+          },
+          navigation: {
+            nextEl: ".swiper-button-next",
+            prevEl: ".swiper-button-prev",
+          },
+          loop: true,
+        });
+
+        // Testimonial Swiper Initialization
+        var testimonialSwiper = new Swiper(".testimonialSwiper", {
+            effect: "coverflow",
+            grabCursor: true,
+            centeredSlides: true,
+            slidesPerView: "auto",
+            loop: true,
+            coverflowEffect: {
+                rotate: 0,
+                stretch: 80,
+                depth: 200,
+                modifier: 1,
+                slideShadows: false,
+            },
+            autoplay: {
+                delay: 4000,
+                disableOnInteraction: false,
+            },
+            pagination: {
+                el: "#reviews .swiper-pagination",
+                clickable: true,
+            },
+            navigation: {
+                nextEl: "#reviews .swiper-button-next",
+                prevEl: "#reviews .swiper-button-prev",
+            },
+        });
     </script>
+
 </body>
 </html>
 
